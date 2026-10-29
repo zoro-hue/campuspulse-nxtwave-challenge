@@ -1,4 +1,94 @@
 {
-  "ambassadors": [],
-  "registrations": []
+  "ambassadors": [
+    {
+      "id": "amb-1",
+      "name": "Rahul Sharma",
+      "code": "RAHUL-AI",
+      "college": "IIT Madras",
+      "phone": "9876543210",
+      "email": "rahul.s@iitm.ac.in",
+      "status": "active",
+      "clicks": 14,
+      "registrations": 2,
+      "createdAt": "2026-10-25T10:00:00.000Z"
+    },
+    {
+      "id": "amb-2",
+      "name": "Priya Patel",
+      "code": "PRIYA-AI",
+      "college": "BITS Pilani",
+      "phone": "9876543211",
+      "email": "priya.p@pilani.bits-pilani.ac.in",
+      "status": "active",
+      "clicks": 9,
+      "registrations": 1,
+      "createdAt": "2026-10-25T11:30:00.000Z"
+    },
+    {
+      "id": "amb-3",
+      "name": "Karthik Raja",
+      "code": "KARTHIK-AI",
+      "college": "NIT Trichy",
+      "phone": "9876543212",
+      "email": "karthik.r@nitt.edu",
+      "status": "active",
+      "clicks": 6,
+      "registrations": 0,
+      "createdAt": "2026-10-25T14:15:00.000Z"
+    }
+  ],
+  "registrations": [
+    {
+      "id": "reg-1",
+      "fullName": "Aarav Verma",
+      "email": "aarav.v@iitm.ac.in",
+      "phone": "9812345670",
+      "college": "IIT Madras",
+      "year": "Final Year (2026) — Computer Science & Engineering",
+      "referralCode": "RAHUL-AI",
+      "channel": "Student Ambassadors",
+      "ambassadorId": "amb-1",
+      "ambassadorName": "Rahul Sharma",
+      "registeredAt": "2026-10-26T09:20:00.000Z"
+    },
+    {
+      "id": "reg-2",
+      "fullName": "Sneha Reddy",
+      "email": "sneha.r@iitm.ac.in",
+      "phone": "9812345671",
+      "college": "IIT Madras",
+      "year": "Final Year (2026) — Information Technology",
+      "referralCode": "RAHUL-AI",
+      "channel": "Student Ambassadors",
+      "ambassadorId": "amb-1",
+      "ambassadorName": "Rahul Sharma",
+      "registeredAt": "2026-10-26T11:45:00.000Z"
+    },
+    {
+      "id": "reg-3",
+      "fullName": "Vikram Joshi",
+      "email": "vikram.j@bits-pilani.ac.in",
+      "phone": "9812345672",
+      "college": "BITS Pilani",
+      "year": "Final Year (2026) — Electronics & Communication",
+      "referralCode": "PRIYA-AI",
+      "channel": "Student Ambassadors",
+      "ambassadorId": "amb-2",
+      "ambassadorName": "Priya Patel",
+      "registeredAt": "2026-10-26T14:10:00.000Z"
+    },
+    {
+      "id": "reg-4",
+      "fullName": "Ananya Deshmukh",
+      "email": "ananya.d@coep.ac.in",
+      "phone": "9812345673",
+      "college": "COEP Pune",
+      "year": "Final Year (2026) — Computer Science & Engineering",
+      "referralCode": "DIRECT",
+      "channel": "Clubs & Class Reps",
+      "ambassadorId": null,
+      "ambassadorName": null,
+      "registeredAt": "2026-10-27T10:05:00.000Z"
+    }
+  ]
 }

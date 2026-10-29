@@ -34,7 +34,7 @@ export default function OverviewScreen() {
       title: 'Plan channels',
       desc: 'Decide where to reach students and allocate your budget.',
       icon: ChannelBarsIcon,
-      mascot: '/assets/feat1_mascot.png',
+      mascot: '/hoggies/megaphone.svg',
       fallbackSvg: '/hoggies/megaphone.svg',
       bg: '#dcebfc',
       border: '#c5daf4',
@@ -45,7 +45,7 @@ export default function OverviewScreen() {
       title: 'WhatsApp outreach',
       desc: 'Draft and dispatch personalized messages with attribution links.',
       icon: PencilIcon,
-      mascot: '/assets/feat2_mascot.png',
+      mascot: '/hoggies/phone-call.svg',
       fallbackSvg: '/hoggies/reading.svg',
       bg: '#fde8e8',
       border: '#f6d2d2',
@@ -56,7 +56,7 @@ export default function OverviewScreen() {
       title: 'Model referrals',
       desc: 'Estimate registrations from your ambassador network.',
       icon: UsersGroupIcon,
-      mascot: '/assets/feat3_mascot.png',
+      mascot: '/hoggies/coding-group.svg',
       fallbackSvg: '/hoggies/coding-group.svg',
       bg: '#fdf4d7',
       border: '#f5e4b7',
@@ -67,7 +67,7 @@ export default function OverviewScreen() {
       title: 'Get next actions',
       desc: 'Use simple rules to know what to do next.',
       icon: LightbulbIcon,
-      mascot: '/assets/feat4_mascot.png',
+      mascot: '/hoggies/workflows.svg',
       fallbackSvg: '/hoggies/survey.svg',
       bg: '#e5f5e4',
       border: '#cae9c9',
@@ -264,7 +264,7 @@ export default function OverviewScreen() {
                 <img
                   src={card.mascot}
                   alt={card.title}
-                  className="w-full h-auto max-h-14 object-contain group-hover:scale-110 transition-transform"
+                  className="w-full h-auto max-h-12 object-contain group-hover:scale-110 transition-transform drop-shadow-sm pointer-events-none select-none"
                   onError={(e) => {
                     e.target.src = card.fallbackSvg;
                   }}

@@ -60,6 +60,151 @@ const DEFAULT_MESSAGES = {
   },
 };
 
+export const INITIAL_AMBASSADORS = [
+  {
+    id: 'amb-1',
+    name: 'Rahul Sharma',
+    code: 'RAHUL-AI',
+    college: 'IIT Madras',
+    phone: '9876543210',
+    email: 'rahul.s@iitm.ac.in',
+    status: 'active',
+    clicks: 14,
+    registrations: 2,
+    createdAt: '2026-10-25T10:00:00.000Z',
+  },
+  {
+    id: 'amb-2',
+    name: 'Priya Patel',
+    code: 'PRIYA-AI',
+    college: 'BITS Pilani',
+    phone: '9876543211',
+    email: 'priya.p@pilani.bits-pilani.ac.in',
+    status: 'active',
+    clicks: 9,
+    registrations: 1,
+    createdAt: '2026-10-25T11:30:00.000Z',
+  },
+  {
+    id: 'amb-3',
+    name: 'Karthik Raja',
+    code: 'KARTHIK-AI',
+    college: 'NIT Trichy',
+    phone: '9876543212',
+    email: 'karthik.r@nitt.edu',
+    status: 'active',
+    clicks: 6,
+    registrations: 0,
+    createdAt: '2026-10-25T14:15:00.000Z',
+  },
+];
+
+export const INITIAL_REGISTRATIONS = [
+  {
+    id: 'reg-1',
+    fullName: 'Aarav Verma',
+    email: 'aarav.v@iitm.ac.in',
+    phone: '9812345670',
+    college: 'IIT Madras',
+    year: 'Final Year (2026) — Computer Science & Engineering',
+    referralCode: 'RAHUL-AI',
+    channel: 'Student Ambassadors',
+    ambassadorId: 'amb-1',
+    ambassadorName: 'Rahul Sharma',
+    registeredAt: '2026-10-26T09:20:00.000Z',
+  },
+  {
+    id: 'reg-2',
+    fullName: 'Sneha Reddy',
+    email: 'sneha.r@iitm.ac.in',
+    phone: '9812345671',
+    college: 'IIT Madras',
+    year: 'Final Year (2026) — Information Technology',
+    referralCode: 'RAHUL-AI',
+    channel: 'Student Ambassadors',
+    ambassadorId: 'amb-1',
+    ambassadorName: 'Rahul Sharma',
+    registeredAt: '2026-10-26T11:45:00.000Z',
+  },
+  {
+    id: 'reg-3',
+    fullName: 'Vikram Joshi',
+    email: 'vikram.j@bits-pilani.ac.in',
+    phone: '9812345672',
+    college: 'BITS Pilani',
+    year: 'Final Year (2026) — Electronics & Communication',
+    referralCode: 'PRIYA-AI',
+    channel: 'Student Ambassadors',
+    ambassadorId: 'amb-2',
+    ambassadorName: 'Priya Patel',
+    registeredAt: '2026-10-26T14:10:00.000Z',
+  },
+  {
+    id: 'reg-4',
+    fullName: 'Ananya Deshmukh',
+    email: 'ananya.d@coep.ac.in',
+    phone: '9812345673',
+    college: 'COEP Pune',
+    year: 'Final Year (2026) — Computer Science & Engineering',
+    referralCode: 'DIRECT',
+    channel: 'Clubs & Class Reps',
+    ambassadorId: null,
+    ambassadorName: null,
+    registeredAt: '2026-10-27T10:05:00.000Z',
+  },
+];
+
+export function computeStatsFromData(regs = [], ambs = []) {
+  const totalRegistrations = regs.length;
+  const target = 500;
+  const remainingGap = Math.max(0, target - totalRegistrations);
+
+  const channelBreakdown = {
+    'Clubs & Class Reps': 0,
+    'Student Ambassadors': 0,
+    'WhatsApp Communities': 0,
+    'Social & Paid Test': 0,
+  };
+
+  regs.forEach((r) => {
+    const ch = r.channel || '';
+    if (ch.includes('Ambassador')) {
+      channelBreakdown['Student Ambassadors']++;
+    } else if (ch.includes('WhatsApp')) {
+      channelBreakdown['WhatsApp Communities']++;
+    } else if (ch.includes('Social') || ch.includes('Paid')) {
+      channelBreakdown['Social & Paid Test']++;
+    } else {
+      channelBreakdown['Clubs & Class Reps']++;
+    }
+  });
+
+  return {
+    target,
+    totalRegistrations,
+    remainingGap,
+    progressPercentage: Math.min(100, Math.round((totalRegistrations / target) * 100)),
+    channelBreakdown,
+    ambassadorsCount: ambs.length,
+    activeAmbassadors: ambs.filter((a) => a.status === 'active').length,
+    deactivatedAmbassadors: ambs.filter((a) => a.status === 'deactivated').length,
+  };
+}
+
+async function safeFetchJson(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      const data = await res.json();
+      return { ok: res.ok, status: res.status, data };
+    }
+    return { ok: false, status: res.status, htmlResponse: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
 export function CampaignProvider({ children }) {
   // Navigation tab state ('overview', 'channels', 'experiments', 'referrals', 'actions', 'docs', 'register', 'ambassadors')
   const [activeTab, setActiveTab] = useState(() => {
@@ -86,23 +231,37 @@ export function CampaignProvider({ children }) {
   // Referral param from URL (?ref=CODE)
   const [referralParam, setReferralParam] = useState('');
 
-  // Live data fetched from backend
-  const [liveStats, setLiveStats] = useState({
-    target: 500,
-    totalRegistrations: 4,
-    remainingGap: 496,
-    progressPercentage: 1,
-    channelBreakdown: {
-      'Clubs & Class Reps': 1,
-      'Student Ambassadors': 3,
-      'WhatsApp Communities': 0,
-      'Social & Paid Test': 0,
-    },
-    ambassadorsCount: 3,
-    activeAmbassadors: 3,
+  // Live data store with hybrid persistent client + backend sync
+  const [ambassadors, setAmbassadors] = useState(() => {
+    try {
+      const saved = localStorage.getItem('campuspulse_live_ambassadors');
+      return saved ? JSON.parse(saved) : INITIAL_AMBASSADORS;
+    } catch {
+      return INITIAL_AMBASSADORS;
+    }
   });
-  const [ambassadors, setAmbassadors] = useState([]);
-  const [registrations, setRegistrations] = useState([]);
+
+  const [registrations, setRegistrations] = useState(() => {
+    try {
+      const saved = localStorage.getItem('campuspulse_live_registrations');
+      return saved ? JSON.parse(saved) : INITIAL_REGISTRATIONS;
+    } catch {
+      return INITIAL_REGISTRATIONS;
+    }
+  });
+
+  const [liveStats, setLiveStats] = useState(() => {
+    let currentRegs = INITIAL_REGISTRATIONS;
+    let currentAmbs = INITIAL_AMBASSADORS;
+    try {
+      const r = localStorage.getItem('campuspulse_live_registrations');
+      const a = localStorage.getItem('campuspulse_live_ambassadors');
+      if (r) currentRegs = JSON.parse(r);
+      if (a) currentAmbs = JSON.parse(a);
+    } catch {}
+    return computeStatsFromData(currentRegs, currentAmbs);
+  });
+
   const [liveLoading, setLiveLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -137,35 +296,52 @@ export function CampaignProvider({ children }) {
     }, 3500);
   }, []);
 
-  // Fetch live campaign data from backend
+  // Fetch live campaign data from backend or local persistent store
   const fetchLiveCampaignData = useCallback(async () => {
     try {
       setLiveLoading(true);
       const [statsRes, ambRes, regRes] = await Promise.all([
-        fetch('/api/stats'),
-        fetch('/api/ambassadors'),
-        fetch('/api/registrations'),
+        safeFetchJson('/api/stats'),
+        safeFetchJson('/api/ambassadors'),
+        safeFetchJson('/api/registrations'),
       ]);
 
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        if (statsData.success) {
-          setLiveStats(statsData.stats);
+      if (statsRes.ok && ambRes.ok && regRes.ok && statsRes.data?.success && ambRes.data?.success && regRes.data?.success) {
+        const fetchedAmbs = ambRes.data.ambassadors || [];
+        const fetchedRegs = regRes.data.registrations || [];
+        setLiveStats(statsRes.data.stats);
+        setAmbassadors(fetchedAmbs);
+        setRegistrations(fetchedRegs);
+        try {
+          localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(fetchedAmbs));
+          localStorage.setItem('campuspulse_live_registrations', JSON.stringify(fetchedRegs));
+        } catch {}
+      } else {
+        // Fallback to client-side localStorage store (handles static hosting like Vercel previews)
+        let localAmbs = [];
+        let localRegs = [];
+        try {
+          const rawAmbs = localStorage.getItem('campuspulse_live_ambassadors');
+          const rawRegs = localStorage.getItem('campuspulse_live_registrations');
+          localAmbs = rawAmbs ? JSON.parse(rawAmbs) : INITIAL_AMBASSADORS;
+          localRegs = rawRegs ? JSON.parse(rawRegs) : INITIAL_REGISTRATIONS;
+          if (!rawAmbs) localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(INITIAL_AMBASSADORS));
+          if (!rawRegs) localStorage.setItem('campuspulse_live_registrations', JSON.stringify(INITIAL_REGISTRATIONS));
+        } catch {
+          localAmbs = INITIAL_AMBASSADORS;
+          localRegs = INITIAL_REGISTRATIONS;
         }
-      }
 
-      if (ambRes.ok) {
-        const ambData = await ambRes.json();
-        if (ambData.success) {
-          setAmbassadors(ambData.ambassadors || []);
-        }
-      }
+        localAmbs.forEach((a) => {
+          a.registrations = localRegs.filter(
+            (r) => r.ambassadorId === a.id || (r.referralCode && r.referralCode.toUpperCase() === a.code.toUpperCase())
+          ).length;
+        });
 
-      if (regRes.ok) {
-        const regData = await regRes.json();
-        if (regData.success) {
-          setRegistrations(regData.registrations || []);
-        }
+        const stats = computeStatsFromData(localRegs, localAmbs);
+        setAmbassadors(localAmbs);
+        setRegistrations(localRegs);
+        setLiveStats(stats);
       }
     } catch (err) {
       console.warn('CampusPulse API sync notice:', err.message);
@@ -174,94 +350,267 @@ export function CampaignProvider({ children }) {
     }
   }, []);
 
-  // Track referral click via backend API
+  // Track referral click via backend API or local store
   const trackReferralClick = useCallback(async (code) => {
     if (!code) return;
+    const cleanCode = code.trim().toUpperCase();
     try {
-      await fetch('/api/track-click', {
+      const apiRes = await safeFetchJson('/api/track-click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ referralCode: code }),
+        body: JSON.stringify({ referralCode: cleanCode }),
+      });
+      if (apiRes.ok) return;
+
+      // Local fallback: increment clicks for active ambassador
+      setAmbassadors((prev) => {
+        const updated = prev.map((a) => {
+          if (a.code.toUpperCase() === cleanCode && a.status === 'active') {
+            return { ...a, clicks: (a.clicks || 0) + 1 };
+          }
+          return a;
+        });
+        try {
+          localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(updated));
+        } catch {}
+        return updated;
       });
     } catch (err) {
-      console.warn('Track click failed:', err);
+      console.warn('Track click notice:', err);
     }
   }, []);
 
-  // Add a new Ambassador via API
+  // Add a new Ambassador via API or local store
   const addAmbassadorApi = useCallback(async (name, college, phone, email) => {
     try {
-      const res = await fetch('/api/ambassadors', {
+      const apiRes = await safeFetchJson('/api/ambassadors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, college, phone, email }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to create ambassador');
+
+      if (apiRes.ok && apiRes.data?.success) {
+        await fetchLiveCampaignData();
+        showToast(`Ambassador code ${apiRes.data.ambassador.code} created!`);
+        return { success: true, ambassador: apiRes.data.ambassador };
       }
-      await fetchLiveCampaignData();
-      showToast(`Ambassador code ${data.ambassador.code} created!`);
-      return { success: true, ambassador: data.ambassador };
+
+      if (!apiRes.ok && apiRes.data?.error) {
+        return { success: false, error: apiRes.data.error };
+      }
+
+      // Local resilient fallback
+      if (!name || name.trim().length < 2) {
+        return { success: false, error: 'Ambassador name is required (at least 2 characters).' };
+      }
+
+      const contact = (phone || email || '').trim();
+      if (!contact) {
+        return { success: false, error: 'A contact identifier (phone or email) is required.' };
+      }
+
+      const cleanName = (name || 'AMB').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'AMB';
+      let code = `${cleanName}-AI`;
+      let counter = 1;
+      const existingCodes = new Set(ambassadors.map((a) => a.code.toUpperCase()));
+      while (existingCodes.has(code.toUpperCase())) {
+        counter++;
+        code = `${cleanName}${counter}-AI`;
+      }
+
+      const newAmbassador = {
+        id: `amb-${Date.now()}`,
+        name: name.trim(),
+        code,
+        college: (college || 'Engineering College').trim(),
+        phone: (phone || '').trim(),
+        email: (email || '').trim().toLowerCase(),
+        status: 'active',
+        clicks: 0,
+        registrations: 0,
+        createdAt: new Date().toISOString(),
+      };
+
+      const updatedAmbs = [newAmbassador, ...ambassadors];
+      const updatedStats = computeStatsFromData(registrations, updatedAmbs);
+
+      setAmbassadors(updatedAmbs);
+      setLiveStats(updatedStats);
+
+      try {
+        localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(updatedAmbs));
+      } catch {}
+
+      showToast(`Ambassador code ${code} created!`);
+      return { success: true, ambassador: newAmbassador };
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [fetchLiveCampaignData, showToast]);
+  }, [ambassadors, registrations, fetchLiveCampaignData, showToast]);
 
   // Toggle ambassador status (active <-> deactivated)
   const toggleAmbassadorStatusApi = useCallback(async (ambassadorId, newStatus) => {
     try {
-      const res = await fetch('/api/ambassadors/toggle-status', {
+      const apiRes = await safeFetchJson('/api/ambassadors/toggle-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: ambassadorId, status: newStatus }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to update ambassador status');
+
+      if (apiRes.ok && apiRes.data?.success) {
+        await fetchLiveCampaignData();
+        showToast(`Ambassador ${apiRes.data.ambassador.code} is now ${newStatus}.`);
+        return { success: true, ambassador: apiRes.data.ambassador };
       }
-      await fetchLiveCampaignData();
-      showToast(`Ambassador ${data.ambassador.code} is now ${newStatus}.`);
-      return { success: true, ambassador: data.ambassador };
+
+      // Local fallback
+      const updatedAmbs = ambassadors.map((a) => {
+        if (a.id === ambassadorId || a.code.toUpperCase() === String(ambassadorId).toUpperCase()) {
+          const nextStatus = newStatus || (a.status === 'active' ? 'deactivated' : 'active');
+          return { ...a, status: nextStatus };
+        }
+        return a;
+      });
+
+      const updatedStats = computeStatsFromData(registrations, updatedAmbs);
+      setAmbassadors(updatedAmbs);
+      setLiveStats(updatedStats);
+
+      try {
+        localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(updatedAmbs));
+      } catch {}
+
+      showToast(`Ambassador status updated.`);
+      return { success: true };
     } catch (err) {
       showToast(err.message, 'error');
       return { success: false, error: err.message };
     }
-  }, [fetchLiveCampaignData, showToast]);
+  }, [ambassadors, registrations, fetchLiveCampaignData, showToast]);
 
-  // Submit Student Registration via API
+  // Submit Student Registration via API or resilient local engine
   const registerStudentApi = useCallback(async (studentData) => {
     try {
-      const res = await fetch('/api/register', {
+      // 1. Try sending to backend API if available
+      const apiRes = await safeFetchJson('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(studentData),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Registration failed');
+
+      if (apiRes.ok && apiRes.data?.success) {
+        await fetchLiveCampaignData();
+        showToast('Registration successful! Spot reserved.');
+        return { success: true, registration: apiRes.data.registration };
       }
-      await fetchLiveCampaignData();
+
+      // If backend returned a functional validation error (like duplicate email HTTP 400), return it directly!
+      if (!apiRes.ok && apiRes.data?.error) {
+        return { success: false, error: apiRes.data.error };
+      }
+
+      // 2. Resilient local registration engine (for Vercel static deployments or offline)
+      const fullName = (studentData.fullName || '').trim();
+      if (fullName.length < 2) {
+        return { success: false, error: 'Full name is required (min 2 characters).' };
+      }
+
+      const normalizedEmail = (studentData.email || '').trim().toLowerCase();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!normalizedEmail || !emailRegex.test(normalizedEmail)) {
+        return { success: false, error: 'Please enter a valid student email address.' };
+      }
+
+      const college = (studentData.college || '').trim();
+      if (college.length < 2) {
+        return { success: false, error: 'College/University name is required.' };
+      }
+
+      // Deduplication check
+      const currentRegs = [...registrations];
+      const currentAmbs = [...ambassadors];
+
+      const isDuplicate = currentRegs.some((r) => (r.email || '').toLowerCase() === normalizedEmail);
+      if (isDuplicate) {
+        return {
+          success: false,
+          error: `Duplicate registration: The email address "${normalizedEmail}" is already registered for this workshop.`,
+        };
+      }
+
+      // Referral code attribution
+      const ref = (studentData.referralCode || '').trim().toUpperCase();
+      let attributedChannel = 'Clubs & Class Reps';
+      let matchedAmb = null;
+      let codeNotice = null;
+
+      if (ref && ref !== 'DIRECT') {
+        const found = currentAmbs.find((a) => a.code.toUpperCase() === ref);
+        if (found) {
+          if (found.status === 'active') {
+            matchedAmb = found;
+            attributedChannel = 'Student Ambassadors';
+            found.registrations = (found.registrations || 0) + 1;
+          } else {
+            codeNotice = `Ambassador code ${ref} is deactivated. Registration recorded under Clubs & Class Reps (Direct).`;
+            attributedChannel = 'Clubs & Class Reps';
+          }
+        }
+      }
+
+      const newRegistration = {
+        id: `reg-${Date.now()}`,
+        fullName,
+        email: normalizedEmail,
+        phone: (studentData.phone || '').trim(),
+        college,
+        year: (studentData.year || 'Final Year (2026)').trim(),
+        referralCode: matchedAmb
+          ? matchedAmb.code
+          : ref && ref !== 'DIRECT'
+          ? `${ref}${codeNotice ? ' (Inactive)' : ''}`
+          : 'DIRECT',
+        channel: attributedChannel,
+        ambassadorId: matchedAmb ? matchedAmb.id : null,
+        ambassadorName: matchedAmb ? matchedAmb.name : null,
+        registeredAt: new Date().toISOString(),
+      };
+
+      const updatedRegs = [newRegistration, ...currentRegs];
+      const updatedStats = computeStatsFromData(updatedRegs, currentAmbs);
+
+      setRegistrations(updatedRegs);
+      setAmbassadors(currentAmbs);
+      setLiveStats(updatedStats);
+
+      try {
+        localStorage.setItem('campuspulse_live_registrations', JSON.stringify(updatedRegs));
+        localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(currentAmbs));
+      } catch {}
+
       showToast('Registration successful! Spot reserved.');
-      return { success: true, registration: data.registration };
+      return { success: true, registration: newRegistration, notice: codeNotice };
     } catch (err) {
-      return { success: false, error: err.message };
+      return { success: false, error: err.message || 'Registration failed' };
     }
-  }, [fetchLiveCampaignData, showToast]);
+  }, [ambassadors, registrations, fetchLiveCampaignData, showToast]);
 
   // Reset live campaign data (for demo/testing convenience)
   const resetLiveCampaignApi = useCallback(async () => {
     try {
-      const res = await fetch('/api/reset-live', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        await fetchLiveCampaignData();
-        showToast('Live database reset to clean baseline.');
-      }
-    } catch (err) {
-      console.error('Reset failed:', err);
-    }
-  }, [fetchLiveCampaignData, showToast]);
+      await safeFetchJson('/api/reset-live', { method: 'POST' });
+    } catch {}
+
+    try {
+      localStorage.setItem('campuspulse_live_ambassadors', JSON.stringify(INITIAL_AMBASSADORS));
+      localStorage.setItem('campuspulse_live_registrations', JSON.stringify(INITIAL_REGISTRATIONS));
+    } catch {}
+
+    setAmbassadors(INITIAL_AMBASSADORS);
+    setRegistrations(INITIAL_REGISTRATIONS);
+    setLiveStats(computeStatsFromData(INITIAL_REGISTRATIONS, INITIAL_AMBASSADORS));
+    showToast('Live database reset to clean baseline.');
+  }, [showToast]);
 
   // Parse URL parameters on load for ?ref=CODE
   useEffect(() => {
