@@ -1,44 +1,4 @@
 {
-  "ambassadors": [
-    {
-      "id": "amb-1793269387497",
-      "name": "Test Ambassador 1793269387286",
-      "code": "TESTAM-AI",
-      "college": "Test Tech Institute",
-      "phone": "",
-      "email": "ambassador@college.edu",
-      "status": "active",
-      "clicks": 1,
-      "registrations": 1,
-      "createdAt": "2026-10-29T10:23:07.497Z"
-    }
-  ],
-  "registrations": [
-    {
-      "id": "reg-1793269387556",
-      "fullName": "Rohan Sharma",
-      "email": "student.deact.1793269387553@college.edu",
-      "phone": "9876543211",
-      "college": "Test Tech Institute",
-      "year": "Final Year (2025/2026)",
-      "referralCode": "TESTAM-AI (Inactive)",
-      "channel": "Clubs & Class Reps",
-      "ambassadorId": null,
-      "ambassadorName": null,
-      "registeredAt": "2026-10-29T10:23:07.556Z"
-    },
-    {
-      "id": "reg-1793269387535",
-      "fullName": "Aarav Patel",
-      "email": "test.student.1793269387530@college.edu",
-      "phone": "9876543210",
-      "college": "Test Tech Institute",
-      "year": "Final Year (2025/2026)",
-      "referralCode": "TESTAM-AI",
-      "channel": "Student Ambassadors",
-      "ambassadorId": "amb-1793269387497",
-      "ambassadorName": "Test Ambassador 1793269387286",
-      "registeredAt": "2026-10-29T10:23:07.535Z"
-    }
-  ]
+  "ambassadors": [],
+  "registrations": []
 }
