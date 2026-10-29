@@ -1,0 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules & build artifacts
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+
+# Temporary QA screenshot files and text dumps
+qa_*.png
+bg_sample_*.png
+icon*.png
+ph_*.png
+plane_crop.png
+reference_cards_crop.png
+ref_*.png
+screen_*.png
+hero_illustration_crop.png
+grass_clump_isolated.png
+grass_patch.png
+audit_*.png
+feat*.png
+prev_grass.txt
+pdf_extracted.txt

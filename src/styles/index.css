@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'RoundHog';
+  src: url('/fonts/RoundHog.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RoundHog';
+  src: url('/fonts/RoundHog-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RoundHog';
+  src: url('/fonts/RoundHog-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RoundHog';
+  src: url('/fonts/RoundHog-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ph-grass-bg: #c5d6ac;
+  --ph-surface: #e2e6d6;
+  --ph-surface-border: #bccab0;
+  --ph-card: #f4f3e9;
+  --ph-card-border: #dcdecb;
+  --ph-text-main: #151b2b;
+  --ph-text-muted: #4e5a47;
+  --ph-orange: #f5a623;
+  --ph-orange-hover: #e89b1c;
+  --ph-orange-border: #ba760d;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--ph-grass-bg);
+  color: var(--ph-text-main);
+  font-family: 'RoundHog', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* PostHog signature orange button */
+.ph-btn-orange {
+  background-color: #f5a623;
+  color: #151b2b;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid #d48a12;
+  box-shadow: 0 2px 0 #b8750d;
+  transition: all 0.1s ease-in-out;
+}
+
+.ph-btn-orange:hover {
+  background-color: #fcae33;
+}
+
+.ph-btn-orange:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 #b8750d;
+}
+
+/* PostHog card */
+.ph-card {
+  background-color: #f4f3e9;
+  border: 1px solid #dcdecb;
+  border-radius: 14px;
+}
+
+/* Shadows */
+.shadow-ph-panel {
+  box-shadow: 0 8px 30px rgba(50, 60, 40, 0.12);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #cad6be;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #a9be92;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #96ab7f;
+}
